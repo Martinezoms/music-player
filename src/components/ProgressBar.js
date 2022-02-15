@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { songs } from "../db";
 
 function ProgressBar({ url, audioRef, playing, index, setIndex }) {
@@ -7,6 +7,8 @@ function ProgressBar({ url, audioRef, playing, index, setIndex }) {
 
   const [currentMin, setCurrentMin] = useState("00");
   const [currentSec, setCurrentSec] = useState("0");
+
+  const progressRange = useRef();
 
   const progress = document.getElementById("progress");
 
@@ -41,14 +43,18 @@ function ProgressBar({ url, audioRef, playing, index, setIndex }) {
   };
 
   const setProgressBar = (e) => {
-    const width = e.target.clientWidth;
+    const width = progressRange.current.clientWidth;
     const xClick = e.nativeEvent.offsetX;
     const { duration } = audioRef.current;
     audioRef.current.currentTime = (xClick / width) * duration;
   };
 
   return (
-    <div className=" bg-white h-1 rounded-md cursor-pointer my-10 mx-5 w-11/12 p-0" onClick={setProgressBar}>
+    <div
+      className=" bg-white h-1 rounded-md cursor-pointer my-10 mx-5 w-11/12 p-0"
+      onClick={setProgressBar}
+      ref={progressRange}
+    >
       <audio src={url} ref={audioRef} onTimeUpdate={updateProgressBar}></audio>
       <div id="progress" className=" bg-progress rounded-md h-full w-0 transition w duration-100 ease-linear"></div>
       <div className=" flex justify-between relative -top-8">
